@@ -5,13 +5,19 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class MyActivity extends Activity {
@@ -23,11 +29,13 @@ public class MyActivity extends Activity {
     Button buttonQuit;
     public String inputString;
     public String testString;
+    public HashMap<String, User> List  = new HashMap<String, User>();
+
+    RandomSentences sentence;
 
     // Count Time elapsed
     public long startTime;
     public long stopTime;
-    public long waitTime;
 
     // Initialize Dialog variable
     private static final int READY_DIALOG = 1;
@@ -37,9 +45,61 @@ public class MyActivity extends Activity {
 
     // keep track of lowest time
     public double lowestTime = 1000.;
-
     // keep track of times played.
     public int count;
+
+    // Image switch
+    ImageView configIcon;
+    // initialize timer
+    Timer timer;
+
+    public void setConfigIcon(final double lowestTime){
+        configIcon.setImageResource(R.drawable.img0);
+        timer = new Timer();
+        int msec = (int) lowestTime * 1000;
+        final String halfPeriod = String.format("%.1f", lowestTime/2);
+        final String outputMessage = "[Notice] " + halfPeriod +" seconds left to be the fastest typist!";
+
+        // full time up
+        // schedule a half wait timer task
+        timer.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // show initial config Icon
+                        configIcon.setImageResource(R.drawable.img1);
+                        Toast.makeText(getApplicationContext(), outputMessage, Toast.LENGTH_LONG).show();
+                        msgTextView.setText(outputMessage);
+                    }
+                });
+            }
+        }, msec/2);
+
+        // schedule a full wait timer task
+            timer.schedule(new TimerTask() {
+
+                @Override
+                public void run() {
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // show initial config Icon
+                            configIcon.setImageResource(R.drawable.img2);
+                            msgTextView.setText("Patience is a virtue :)");
+                            Toast.makeText(getApplicationContext(), "Time's up ^w^", Toast.LENGTH_LONG).show();
+                            timer.cancel();
+                        }
+                    });
+                }
+            }, msec);
+
+
+    }
 
 
     @Override
@@ -59,6 +119,7 @@ public class MyActivity extends Activity {
 
                             // this will hide the dialog
                             dialog.cancel();
+
                         }
                     });
 
@@ -85,7 +146,7 @@ public class MyActivity extends Activity {
             }
 
             // round the result
-            String lowest = String.format("%.1f", lowestTime);
+            final String lowest = String.format("%.1f", lowestTime);
             String result = String.format("%.1f", timePeriod);
 
             msgTextView.setText("Correct:)   " + result + " seconds passed.");
@@ -127,6 +188,20 @@ public class MyActivity extends Activity {
                             userInput.setHint("Please input the sentence above. :)");
                             msgTextView.setText("Please input the sentence above. :)");
 
+                            // set next sentence
+                            String testSentence = sentence.sentenceGenerator(4);
+
+                            mainTextView.setText(testSentence);
+
+                            // terminate any timer
+                            if (timer != null) {
+                                timer.cancel();
+                            }
+
+                            // set Icon Timer
+                            setConfigIcon(lowestTime);
+                            System.out.println("SetTimer: "+ lowestTime + "seconds");
+
                             // this will hide the dialog
                             dialog.cancel();
                         }
@@ -158,10 +233,25 @@ public class MyActivity extends Activity {
                             userInput.setHint("Please input the sentence above. :)");
                             msgTextView.setText("Please input the sentence above. :)");
 
+                            // set next sentence
+                            String testSentence = sentence.sentenceGenerator(7);
+                            mainTextView.setText(testSentence);
+
+                            // terminate any timer
+                            if (timer != null) {
+                                timer.cancel();
+                            }
+
+                            // set Icon Timer
+                            setConfigIcon(lowestTime);
+                            System.out.println("SetTimer: "+ lowestTime + "seconds");
+
                             // this will hide the dialog
                             dialog.cancel();
+
                         }
                     });
+
 
             return builder.create();
 
@@ -176,13 +266,22 @@ public class MyActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
 
+        // initialize controller for Icon
+        configIcon = (ImageView)findViewById(R.id.config_icon);
+
+        // initialize random sentence
+        sentence = new RandomSentences();
+        String testSentence = sentence.sentenceGenerator(10);
+
+
+
         // initialize count value
         count = 0;
 
         // Access the TextView defined in layout XML
         // and then set its text
         mainTextView = (TextView)findViewById(R.id.introduction);
-        mainTextView.setText("Set in Java!");
+        mainTextView.setText(testSentence);
 
         msgTextView = (TextView)findViewById(R.id.feedback);
         msgTextView.setText("Click the SUBMIT button when finish!");
@@ -195,6 +294,8 @@ public class MyActivity extends Activity {
             @Override
             //handler for clicking on submit button
             public void onClick(View view) {
+                // cancel timer for face icon
+
 
                 // get user input string
                 inputString = userInput.getText().toString();
@@ -227,6 +328,8 @@ public class MyActivity extends Activity {
                 // increase count
                 count +=1 ;
 
+
+
             }
         });
 
@@ -243,9 +346,10 @@ public class MyActivity extends Activity {
             }
         });
 
-
         // show dialog on start of activity
         showDialog(READY_DIALOG);
+
+
     }
 
 
@@ -269,6 +373,12 @@ public class MyActivity extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+
+
+
+
 }
 
 
