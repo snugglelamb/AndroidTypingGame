@@ -19,7 +19,7 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:orientation="horizontal">
             <TextView
                 android:id="@+id/introduction"
@@ -27,12 +27,14 @@
                 android:layout_gravity="start"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:layout_weight="5"
+                android:textSize="20sp"/>
 
             <ImageView
                 android:id="@+id/config_icon"
+                android:layout_weight="1"
                 android:layout_width="70dp"
-                android:layout_height="70dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:src="@drawable/img0"/>
 
@@ -44,14 +46,38 @@
         android:layout_weight="3"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/tip"/>
+        android:hint="@string/tip"
+        android:textSize="20sp"/>
 
-    <TextView
-        android:id="@+id/feedback"
-        android:layout_weight="1"
-        android:text="@string/tip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:gravity="top"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/feedback"
+            android:layout_weight="10"
+            android:text="@string/tip"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"/>
+
+        <Button
+            android:id="@+id/button_submit"
+            android:layout_weight="1"
+            android:layout_gravity="start"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_marginRight="0dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+
+            android:textSize="20sp"
+            android:text="@string/button_submit"/>
+        </LinearLayout>
+
 
     </LinearLayout>
 
@@ -61,25 +87,49 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-    <Button
-       android:id="@+id/button_submit"
-       android:layout_gravity="start"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
+        <Button
+            android:id="@+id/button_Logout"
+            android:text="@string/button_logout"
+            android:layout_width="90dp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="start"
+            android:layout_marginLeft="0dp"
+            android:layout_marginStart="0dp"
+            android:textSize="20sp"/>
 
-        android:layout_marginLeft="20dp"
-        android:layout_marginStart="20dp"
-       android:text="@string/button_submit"/>
+        <Button
+            android:id="@+id/button_level"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="start"
+            android:layout_marginLeft="0dp"
+            android:layout_marginStart="0dp"
+            android:textSize="20sp"
+            android:text="@string/button_level"/>
+
+
+        <Button
+            android:id="@+id/button_score"
+            android:text="@string/button_score"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="end"
+            android:layout_marginLeft="40dp"
+            android:layout_marginStart="40dp"
+            android:textSize="20sp"/>
 
     <Button
         android:id="@+id/button_quit"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
+        android:layout_height="fill_parent"
+        android:layout_gravity="end"
+        android:layout_marginLeft="0dp"
+        android:layout_marginStart="00dp"
+        android:text="@string/button_quit"
+        android:textSize="20sp"/>
 
-        android:layout_marginLeft="20dp"
-        android:layout_marginStart="20dp"
-        android:text="@string/button_quit"/>
+
+
         
         </LinearLayout>
 

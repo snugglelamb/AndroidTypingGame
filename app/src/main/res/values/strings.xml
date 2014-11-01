@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">FirstTry</string>
+    <string name="app_name">Typing Game</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_show_score">Show Score</string>
+    <string name="game_title">Typing Game</string>
     <string name="textview">Shawn is learning AnDROID!</string>
     <string name="tip">Please input the sentence above :)</string>
     <string name="action_settings">Settings</string>
     <string name="button_submit">Submit</string>
     <string name="button_quit">Quit</string>
-    <string name="title_activity_login">Login</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="game_title">Typing Game</string>
+    <string name="button_logout">Logout</string>
+    <string name="button_score">Score</string>
+    <string name="button_level">Level</string>
+    <string name="setting_easy">Easy</string>
+    <string name="setting_medium">Medium</string>
+    <string name="setting_hard">Hard</string>
 
 </resources>
