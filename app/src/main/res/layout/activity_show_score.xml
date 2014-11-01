@@ -1,0 +1,364 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tableLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context="shawnli.firsttry.showScore"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+       <TableRow
+       android:layout_width="fill_parent"
+       android:layout_height="wrap_content"
+       android:padding="5dip">
+           <TextView
+               android:id="@+id/user1_name"
+               android:layout_height="wrap_content"
+               android:layout_width="fill_parent"
+               android:padding="5dip"
+               android:text="User1"
+               android:textAppearance="?android:attr/textAppearanceLarge"/>
+       </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dip">
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text="Level"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text="best time(s)"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text="worst time(s)"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text="score(best time)"/>
+
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dip">
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text="@string/setting_easy"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text=""
+                android:id="@+id/user1_easy_best"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text=""
+                android:id="@+id/user1_easy_worst"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text=""
+                android:id="@+id/user1_easy_score"/>
+
+
+            </TableRow>
+
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dip">
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dip"
+            android:text="@string/setting_medium"/>
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dip"
+            android:text=""
+            android:id="@+id/user1_medium_best"/>
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dip"
+            android:text=""
+            android:id="@+id/user1_medium_worst"/>
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dip"
+            android:text=""
+            android:id="@+id/user1_medium_score"/>
+
+    </TableRow>
+
+
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dip">
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dip"
+            android:text="@string/setting_hard"/>
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dip"
+            android:text=""
+            android:id="@+id/user1_hard_best"/>
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dip"
+            android:text=""
+            android:id="@+id/user1_hard_worst"/>
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:padding="5dip"
+            android:text=""
+            android:id="@+id/user1_hard_score"/>
+
+    </TableRow>
+    </LinearLayout>
+
+
+    <!--User 2-->
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dip">
+            <TextView
+                android:id="@+id/user2_name"
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:padding="5dip"
+                android:text="User2"
+                android:textAppearance="?android:attr/textAppearanceLarge"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dip">
+            <TextView
+                android:id="@+id/clear1"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text="Level"/>
+
+            <TextView
+                android:id="@+id/clear2"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text="best time(s)"/>
+
+            <TextView
+                android:id="@+id/clear3"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text="worst time(s)"/>
+
+            <TextView
+                android:id="@+id/clear4"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text="score(best time)"/>
+
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dip">
+            <TextView
+                android:id="@+id/clear5"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text="@string/setting_easy"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text=""
+                android:id="@+id/user2_easy_best"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text=""
+                android:id="@+id/user2_easy_worst"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text=""
+                android:id="@+id/user2_easy_score"/>
+
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dip">
+            <TextView
+                android:id="@+id/clear6"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text="@string/setting_medium"/>
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text=""
+                android:id="@+id/user2_medium_best"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text=""
+                android:id="@+id/user2_medium_worst"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text=""
+                android:id="@+id/user2_medium_score"/>
+
+        </TableRow>
+
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dip">
+            <TextView
+                android:id="@+id/clear7"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text="@string/setting_hard"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text=""
+                android:id="@+id/user2_hard_best"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text=""
+                android:id="@+id/user2_hard_worst"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text=""
+                android:id="@+id/user2_hard_score"/>
+
+        </TableRow>
+    </LinearLayout>
+    <Button
+        android:id="@+id/button_score_back"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Back"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop= "10dp"/>
+
+
+</LinearLayout>
