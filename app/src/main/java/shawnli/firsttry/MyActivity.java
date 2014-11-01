@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
@@ -15,38 +16,58 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class MyActivity extends Activity {
+
+public class MyActivity extends Activity{
 
     TextView mainTextView;
     TextView msgTextView;
     EditText userInput;
     Button buttonSubmit;
     Button buttonQuit;
-    public String inputString;
-    public String testString;
-    public HashMap<String, User> List  = new HashMap<String, User>();
+    Button buttonScore;
+    Button buttonLevel;
+    Button buttonLogout;
 
+    private String inputString;
+    private String testString;
+
+    public HashMap<String, User> userList  = new HashMap<String, User>();
+    User user;
+    private int level;
+    private int userID = 1;
+    // switch level in runtime, to reset track of lowest time
+    private int score;
+    private boolean played = false; //make sure user play at least one time
+
+    sentenceScore finalScore;
     RandomSentences sentence;
 
     // Count Time elapsed
-    public long startTime;
-    public long stopTime;
+    private long startTime;
+    private long stopTime;
 
     // Initialize Dialog variable
     private static final int READY_DIALOG = 1;
     private static final int CORRECT_DIALOG = 2;
     private static final int INCORRECT_DIALOG = 3;
+    private static final int CHANGE_DIALOG = 4;
+    private static final int LOGOUT_DIALOG = 5;
+    private static final int WARNING_DIALOG = 6;
 
 
     // keep track of lowest time
-    public double lowestTime = 1000.;
+    private double lowestTime = 1000.;
+    // keep track of slowest time
+    private double slowestTime = 0.;
+
     // keep track of times played.
-    public int count;
+    private int[] count = new int[] {0,0,0,0,0,0,0,0,0,0,0};
 
     // Image switch
     ImageView configIcon;
@@ -127,6 +148,8 @@ public class MyActivity extends Activity {
         }
 
         else if (id == CORRECT_DIALOG){
+            // at least played once
+            played = true;
 
             // get stop time
             stopTime = System.currentTimeMillis();
@@ -140,10 +163,25 @@ public class MyActivity extends Activity {
             if (lowestTime > timePeriod)
             {
                 lowestTime = timePeriod;
+                user.updateBestTime(score, lowestTime);
+
                 flag = true; // not beat the best time
             }else{
                 flag = false;
             }
+
+            // record slowest time
+            if (timePeriod > slowestTime)
+            {
+                slowestTime = timePeriod;
+                user.updateWorstTime(slowestTime);
+            }
+
+            // record both time value to hashmap userList
+            userList.put(user.getName(), user);
+            System.out.println(userList);
+
+
 
             // round the result
             final String lowest = String.format("%.1f", lowestTime);
@@ -154,7 +192,7 @@ public class MyActivity extends Activity {
             String outputMessage;
 
             // decide whether it's first time playing this game
-            if (count == 0){
+            if (count[level] == 0){
                 // Output String on Dialog when first time play this game
                 outputMessage = "Great! It took you " + result + " seconds to finish." + "\n Click Yes! to continue.";
             }
@@ -169,6 +207,8 @@ public class MyActivity extends Activity {
                     outputMessage = "Correct! But not fast enough.\nBest performance: " + lowest + " seconds.\n" + "It took you " + result + " seconds." + "\nClick Yes! to continue.";
                 }
             }
+
+
             // build new dialog
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -189,7 +229,12 @@ public class MyActivity extends Activity {
                             msgTextView.setText("Please input the sentence above. :)");
 
                             // set next sentence
-                            String testSentence = sentence.sentenceGenerator(4);
+                            String testSentence = sentence.sentenceGenerator(level);
+                            // calculate sentence score
+                            finalScore = new sentenceScore();
+                            score = finalScore.finalScore(testSentence);
+                            System.out.println("SENTENCE SCORE: "+ score);
+
 
                             mainTextView.setText(testSentence);
 
@@ -234,8 +279,14 @@ public class MyActivity extends Activity {
                             msgTextView.setText("Please input the sentence above. :)");
 
                             // set next sentence
-                            String testSentence = sentence.sentenceGenerator(7);
+                            String testSentence = sentence.sentenceGenerator(level);
                             mainTextView.setText(testSentence);
+
+                            // calculate sentence score
+                            finalScore = new sentenceScore();
+                            score = finalScore.finalScore(testSentence);
+                            System.out.println("SENTENCE SCORE: "+ score);
+
 
                             // terminate any timer
                             if (timer != null) {
@@ -257,6 +308,295 @@ public class MyActivity extends Activity {
 
         }
 
+        else if (id == CHANGE_DIALOG){
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Select a Level");
+
+            // this is the message to display
+            builder.setMessage("Which level would u like to switch to? :)");
+            // this is the button to display
+            builder.setNegativeButton("Easy",
+                    new DialogInterface.OnClickListener() {
+                        // this is the method to call when the button is clicked
+                        public void onClick(DialogInterface dialog, int id) {
+
+                            // choose easy level
+                            user.setLevel("easy");
+                            buttonLevel.setText(user.getLevel());
+
+                            // reset counting
+                            startTime = System.currentTimeMillis();
+
+                            // reset EditText, msgText
+                            userInput.setText("");
+                            userInput.setHint("Please input the sentence above. :)");
+                            msgTextView.setText("Please input the sentence above. :)");
+
+                            // set next sentence
+                            level = 4;
+
+                            // load existing lowestTime, if null set 1000/0
+                            if (user.getBestTimeHash().get("easy") != null){
+                                lowestTime = user.getBestTimeHash().get("easy");
+                                slowestTime = user.getWorstTimeHash().get("easy");
+                                Toast.makeText(getApplicationContext(), "LEVEL CHANGE", Toast.LENGTH_LONG).show();
+                            }
+                            else{
+                                lowestTime = 1000.;
+                                slowestTime = 0.;
+                            }
+
+                            String testSentence = sentence.sentenceGenerator(level);
+
+                            // calculate sentence score
+                            finalScore = new sentenceScore();
+                            score = finalScore.finalScore(testSentence);
+                            System.out.println("SENTENCE SCORE: "+ score);
+
+                            mainTextView.setText(testSentence);
+
+                            // terminate any timer
+                            if (timer != null) {
+                                timer.cancel();
+                            }
+
+                            // set Icon Timer
+                            setConfigIcon(lowestTime);
+
+                            // this will hide the dialog
+                            dialog.cancel();
+
+                        }
+                    });
+            builder.setNeutralButton("Medium",
+                    new DialogInterface.OnClickListener() {
+                        // this is the method to call when the button is clicked
+                        public void onClick(DialogInterface dialog, int id) {
+
+                            // choose medium
+                            user.setLevel("medium");
+                            buttonLevel.setText(user.getLevel());
+
+                            // reset counting
+                            startTime = System.currentTimeMillis();
+
+                            // reset EditText, msgText
+                            userInput.setText("");
+                            userInput.setHint("Please input the sentence above. :)");
+                            msgTextView.setText("Please input the sentence above. :)");
+
+                            // set next sentence
+                            level = 7;
+                            // load existing lowestTime, if null set 1000/0
+                            if (user.getBestTimeHash().get("medium") != null){
+                                lowestTime = user.getBestTimeHash().get("medium");
+                                slowestTime = user.getWorstTimeHash().get("medium");
+                                Toast.makeText(getApplicationContext(), "LEVEL CHANGE", Toast.LENGTH_LONG).show();
+                            }
+                            else{
+                                lowestTime = 1000.;
+                                slowestTime = 0.;
+                            }
+
+                            String testSentence = sentence.sentenceGenerator(level);
+
+                            // calculate sentence score
+                            finalScore = new sentenceScore();
+                            score = finalScore.finalScore(testSentence);
+                            System.out.println("SENTENCE SCORE: "+ score);
+
+
+                            mainTextView.setText(testSentence);
+
+                            // terminate any timer
+                            if (timer != null) {
+                                timer.cancel();
+                            }
+
+                            // set Icon Timer
+                            setConfigIcon(lowestTime);
+
+                            // this will hide the dialog
+                            dialog.cancel();
+                        }
+                    });
+
+            builder.setPositiveButton("Hard",
+                    new DialogInterface.OnClickListener() {
+                        // this is the method to call when the button is clicked
+                        public void onClick(DialogInterface dialog, int id) {
+
+                            // choose hard
+                            user.setLevel("hard");
+                            buttonLevel.setText(user.getLevel());
+
+                            // reset counting
+                            startTime = System.currentTimeMillis();
+
+                            // reset EditText, msgText
+                            userInput.setText("");
+                            userInput.setHint("Please input the sentence above. :)");
+                            msgTextView.setText("Please input the sentence above. :)");
+
+                            // set next sentence
+                            level = 10;
+
+                            // load existing lowestTime, if null set 1000/0
+                            if (user.getBestTimeHash().get("hard") != null){
+                                lowestTime = user.getBestTimeHash().get("hard");
+                                slowestTime = user.getWorstTimeHash().get("hard");
+                                Toast.makeText(getApplicationContext(), "LEVEL CHANGE", Toast.LENGTH_LONG).show();
+                            }
+                            else{
+                                lowestTime = 1000.;
+                                slowestTime = 0.;
+                            }
+
+                            String testSentence = sentence.sentenceGenerator(level);
+
+                            // calculate sentence score
+                            finalScore = new sentenceScore();
+                            score = finalScore.finalScore(testSentence);
+                            System.out.println("SENTENCE SCORE: "+ score);
+
+
+                            mainTextView.setText(testSentence);
+
+                            // terminate any timer
+                            if (timer != null) {
+                                timer.cancel();
+                            }
+
+                            // set Icon Timer
+                            setConfigIcon(lowestTime);
+
+                            // this will hide the dialog
+                            dialog.cancel();
+
+                        }
+                    });
+
+            return builder.create();
+        }
+
+        else if (id == LOGOUT_DIALOG){
+            // otherwise, show a dialog to ask for their name
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setTitle("Hi!");
+            alert.setMessage("You name please?");
+
+            // Create EditText for entry
+            final EditText input = new EditText(this);
+            alert.setView(input);
+
+            // Make an "OK" button to save the name
+            alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    // Grab the EditText's input
+                    String inputName = input.getText().toString();
+
+                    // Initialize new user
+                    user = new User();
+                    user.setName(inputName);
+                    // update userID
+                    if (played) {
+                        userID += 1;
+                    }
+                    user.setId(userID);
+
+                    System.out.println("Name: "+ user.getName() + "  ID: "+ user.getId());
+
+                    // update level info
+                    switch (level){
+                        case 4:
+                            user.setLevel("easy");
+                            break;
+                        case 7:
+                            user.setLevel("medium");
+                            break;
+                        case 10:
+                            user.setLevel("hard");
+                            break;
+                    }
+
+                    // re-initialize the factors
+                    lowestTime = 1000.;
+                    slowestTime = 0.;
+
+                    // reset count
+                    count[4] = 0;
+                    count[7] = 0;
+                    count[10] = 0;
+                    played = false;
+
+                    // reset sentence
+                    String testSentence = sentence.sentenceGenerator(level);
+
+                    // calculate sentence score
+                    finalScore = new sentenceScore();
+                    score = finalScore.finalScore(testSentence);
+                    System.out.println("SENTENCE SCORE: "+ score);
+
+                    // reset UI
+                    mainTextView.setText(testSentence);
+                    userInput.setText("");
+                    userInput.setHint("Please input the sentence above. :)");
+                    msgTextView.setText("Please input the sentence above. :)");
+                    buttonLogout.setText(user.getName());
+
+                    // terminate any timer
+                    if (timer != null) {
+                        timer.cancel();
+                    }
+
+                    // reset time counting
+                    startTime = System.currentTimeMillis();
+
+                    // set Icon Timer
+                    setConfigIcon(lowestTime);
+
+                    // Welcome the new user
+                    Toast.makeText(getApplicationContext(), "Welcome, " + inputName + "!", Toast.LENGTH_LONG).show();
+
+                    // cancel dialog
+                    dialog.cancel();
+                }
+            });
+
+            // Make a "Cancel" button
+            // that simply dismisses the alert
+            alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int whichButton) {}
+            });
+
+            return alert.create();
+
+        }
+        else if (id == WARNING_DIALOG) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            // this is the message to display
+            builder.setTitle("Hint");
+            builder.setMessage("To reach the score screen, please at least finish one game.");
+            // this is the button to display
+            builder.setPositiveButton("Yes!",
+                    new DialogInterface.OnClickListener() {
+                        // this is the method to call when the button is clicked
+                        public void onClick(DialogInterface dialog, int id) {
+
+                            // reset counting
+                            startTime = System.currentTimeMillis();
+
+                            // this will hide the dialog
+                            dialog.cancel();
+
+                        }
+                    });
+
+            return builder.create();
+        }
 
         else return null;
     }
@@ -266,17 +606,48 @@ public class MyActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
 
+        // Create user object
+        user = new User();
+
+        // Get username & setting from former activity
+        Bundle extra = getIntent().getExtras();
+        if (extra != null){
+
+          user.setName(extra.getString("Name"));
+          user.setLevel(extra.getString("Level"));
+        }
+
+        user.setId(userID);
+        System.out.println("Name: "+ user.getName() + "  ID: "+ user.getId());
+
+
+        System.out.println("USER: "+ user);
+
+
+        // choose level
+        if (user.getLevel().equals("easy")){
+            level = 4;
+        }
+        else if (user.getLevel().equals("medium")){
+            level = 7;
+        }
+        else{
+            level = 10;
+        }
+
+
         // initialize controller for Icon
         configIcon = (ImageView)findViewById(R.id.config_icon);
 
         // initialize random sentence
         sentence = new RandomSentences();
-        String testSentence = sentence.sentenceGenerator(10);
+        String testSentence = sentence.sentenceGenerator(level);
 
-
-
-        // initialize count value
-        count = 0;
+        // calculate sentence score
+        finalScore = new sentenceScore();
+        score = finalScore.finalScore(testSentence);
+        System.out.println("SENTENCE SCORE: "+ score);
+        count[level] = 0;
 
         // Access the TextView defined in layout XML
         // and then set its text
@@ -294,8 +665,6 @@ public class MyActivity extends Activity {
             @Override
             //handler for clicking on submit button
             public void onClick(View view) {
-                // cancel timer for face icon
-
 
                 // get user input string
                 inputString = userInput.getText().toString();
@@ -314,6 +683,7 @@ public class MyActivity extends Activity {
                     showDialog(CORRECT_DIALOG);
 
 
+
                 }else{
                     // show incorrect response
 //                    msgTextView.setText("Incorrect input, plz check");
@@ -326,7 +696,7 @@ public class MyActivity extends Activity {
                 }
 
                 // increase count
-                count +=1 ;
+                count[level] +=1 ;
 
 
 
@@ -346,8 +716,68 @@ public class MyActivity extends Activity {
             }
         });
 
+
+        buttonLogout = (Button)findViewById(R.id.button_Logout);
+
+        if (!user.getName().equals("")) {
+            buttonLogout.setText(user.getName());
+        }
+        else{
+            buttonLogout.setText("Logout");
+        }
+
+        buttonLogout.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+//                                                Intent next = new Intent(MyActivity.this, Login.class);
+//                                                startActivity(next);
+                                                // just bump out a dialog
+                                                removeDialog(LOGOUT_DIALOG);
+                                                showDialog(LOGOUT_DIALOG);
+
+                                            }
+                                        });
+
+
+        // show score routine
+        buttonScore = (Button)findViewById(R.id.button_score);
+        buttonScore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (userList.size() == 0)
+                {
+                    removeDialog(WARNING_DIALOG);
+                    showDialog(WARNING_DIALOG);
+                }
+                else {
+                    // debug
+                    System.out.println("PARCEL SENT: " + userList.size());
+
+                    Intent next = new Intent(MyActivity.this, showScore.class);
+                    next.putExtra("userList", userList);
+                    startActivity(next);
+                }
+            }
+        });
+
+
+        // pick level during runtime
+        buttonLevel = (Button)findViewById(R.id.button_level);
+        buttonLevel.setText(user.getLevel());
+        buttonLevel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                removeDialog(CHANGE_DIALOG);
+                showDialog(CHANGE_DIALOG);
+
+            }
+        });
+
         // show dialog on start of activity
         showDialog(READY_DIALOG);
+
+
 
 
     }
