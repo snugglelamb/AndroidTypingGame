@@ -16,7 +16,7 @@ How to play this game:
 1. Input name and Login
 2. Pick a level to start(4,7,10 words for easy, medium, hard)
 3. Press on yes when ready to start timer
-4. Input the sentence and click submit.
+4. Input the random sentence generated in text box and click submit.
 5. If you've played it for once, you can check the score list by pressing on score.
 6. The score screen will show the latest two players' score,best/worst time for each level. All players' statistics are stored in file user1.ser at external storage. 
 7. You could change level in run time.
