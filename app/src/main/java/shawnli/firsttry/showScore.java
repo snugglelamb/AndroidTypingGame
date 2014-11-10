@@ -3,6 +3,7 @@ package shawnli.firsttry;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,6 +13,10 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -65,9 +70,30 @@ public class showScore extends Activity {
 
 
         // to retrieve object in second Activity
-        Intent intent = getIntent();
-        HashMap<String, User> userList = (HashMap<String,User>) intent.getSerializableExtra("userList");
+//        Intent intent = getIntent();
+//        HashMap<String, User> userList = (HashMap<String,User>) intent.getSerializableExtra("userList");
 
+        // retrieve data from file "/tmp/user.ser"
+        HashMap<String, User> userList = null;
+        String path= Environment.getExternalStorageDirectory().toString()+"/user1.ser";
+        File data = new File(path);
+        try
+        {
+            FileInputStream fileIn = new FileInputStream(data);
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            userList = (HashMap<String,User>) in.readObject();
+            in.close();
+            fileIn.close();
+        }catch(IOException i)
+        {
+            i.printStackTrace();
+            return;
+        }catch(ClassNotFoundException c)
+        {
+            System.out.println("User class not found");
+            c.printStackTrace();
+            return;
+        }
 
         int size = userList.size();
         // debug

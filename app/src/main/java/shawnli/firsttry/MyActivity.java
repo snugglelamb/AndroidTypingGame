@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +17,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Timer;
@@ -73,6 +80,7 @@ public class MyActivity extends Activity{
     ImageView configIcon;
     // initialize timer
     Timer timer;
+    private int new_flag = 0;
 
     public void setConfigIcon(final double lowestTime){
         configIcon.setImageResource(R.drawable.img0);
@@ -127,6 +135,9 @@ public class MyActivity extends Activity{
     protected Dialog onCreateDialog(int id){
         if (id == READY_DIALOG) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            // can't click outside
+//            setCanceledOnTouchOutside(false);
+//            builder.setCanceledOnTouchOutside(false);
             // this is the message to display
             builder.setMessage("Are you ready?");
             // this is the button to display
@@ -134,7 +145,6 @@ public class MyActivity extends Activity{
                     new DialogInterface.OnClickListener() {
                         // this is the method to call when the button is clicked
                         public void onClick(DialogInterface dialog, int id) {
-
                             // start counting
                             startTime = System.currentTimeMillis();
 
@@ -605,6 +615,42 @@ public class MyActivity extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
+        // read data from file
+        String path= Environment.getExternalStorageDirectory().toString()+"/user1.ser";
+        final File data = new File(path);
+
+
+        if (!data.isFile()){
+            try{
+                new_flag = 1;
+                data.createNewFile();
+                System.out.println("created userList file!!!!!!\n");
+            }catch(IOException i){
+                i.printStackTrace();
+            }
+        }
+
+        // read from existing file
+        if (new_flag != 1) {
+            try {
+                FileInputStream fileIn = new FileInputStream(data);
+                ObjectInputStream in = new ObjectInputStream(fileIn);
+                userList = (HashMap<String, User>) in.readObject();
+                in.close();
+                fileIn.close();
+
+                // update userID
+                int size_load = userList.size();
+                userID = userID + size_load;
+            } catch (IOException i) {
+                i.printStackTrace();
+                return;
+            } catch (ClassNotFoundException c) {
+                System.out.println("User class not found");
+                c.printStackTrace();
+                return;
+            }
+        }
 
         // Create user object
         user = new User();
@@ -616,7 +662,17 @@ public class MyActivity extends Activity{
           user.setName(extra.getString("Name"));
           user.setLevel(extra.getString("Level"));
         }
+        // loop through current list to see if new name exists
+        for (HashMap.Entry<String, User> entry : userList.entrySet()) {
 
+            String key_temp = entry.getKey();
+            User user_temp = entry.getValue();
+            System.out.println("Name: " + key_temp + "  ID: " + user_temp.getId());
+            if (key_temp.equals(user.getName())){
+                userList.put(key_temp+"_old",user_temp);
+            }
+
+        }
         user.setId(userID);
         System.out.println("Name: "+ user.getName() + "  ID: "+ user.getId());
 
@@ -709,6 +765,19 @@ public class MyActivity extends Activity{
             //handler for clicking on quit button
             public void onClick(View view) {
 
+                try {
+
+                    FileOutputStream fileOut = new FileOutputStream(data);
+                    ObjectOutputStream out = new ObjectOutputStream(fileOut);
+                    out.writeObject(userList);
+                    out.close();
+                    fileOut.close();
+                    System.out.printf("Serialized data is saved in /user1.ser\n");
+                }catch(IOException i)
+                {
+                    i.printStackTrace();
+                }
+
                 // finish garbage collection
                 finish();
                 // exit program
@@ -751,11 +820,27 @@ public class MyActivity extends Activity{
                     showDialog(WARNING_DIALOG);
                 }
                 else {
+//                    save data to file when click on score button
+                      // save userlist object to file
+                        try {
+
+                            FileOutputStream fileOut = new FileOutputStream(data);
+                            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+                            out.writeObject(userList);
+                            out.close();
+                            fileOut.close();
+                            System.out.printf("Serialized data is saved in /user1.ser\n");
+                        }catch(IOException i)
+                            {
+                                i.printStackTrace();
+                            }
+
+
                     // debug
                     System.out.println("PARCEL SENT: " + userList.size());
 
                     Intent next = new Intent(MyActivity.this, showScore.class);
-                    next.putExtra("userList", userList);
+//                    next.putExtra("userList", userList);
                     startActivity(next);
                 }
             }
