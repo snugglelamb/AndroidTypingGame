@@ -1,7 +1,6 @@
 CIS 542 lab3 README
 
 Name: Zhi Li
-PennKey: zhili
 Android SDK: Android 4.2.2, API Level 17
 Android studio: Android studio(beta) 0.8.9
 Host Operating System: Mac OSX 10.10 Yosemite
