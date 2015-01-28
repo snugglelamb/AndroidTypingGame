@@ -4,7 +4,7 @@
     Android SDK: Android 4.2.2, API Level 17
     Android studio: Android studio(beta) 0.8.9
     Host Operating System: Mac OSX 10.10 Yosemite
-    First Android App
+    First Android App with user management, score display, level selection and file management.
 
 ##Notice: 
   1. If you are using emulator, make sure to specify the size of external storage ("SD Card") properly, since the default is 0. (could set it to 200 MiB) 
@@ -23,3 +23,5 @@
   8. You could logout and input another user name to login. (If the new user share the same name as a former user stored in file, the new user will be assigned a new ID, while the former user's ID remains unchanged and name followed by "_old".
   9. Press quit to exit, the game statistics are stored in
   10. The game is tested on a real android device(Neutab i7, Android 4.4.2), it has also passed the test on emulator.
+
+
